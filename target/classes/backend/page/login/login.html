@@ -28,14 +28,17 @@
           <div class="login-form-title">
             <img src="../../images/login/login-logo2.png" style="width:220px;height:80px;" alt="" />
           </div>
-          <el-form-item prop="username">
-            <el-input v-model="loginForm.username" type="text" auto-complete="off" placeholder="账号" maxlength="20"
+
+          <el-form-item prop="phone">
+            <el-input v-model="loginForm.phone" type="text" auto-complete="off" placeholder="手机账号" maxlength="20"
               prefix-icon="iconfont icon-user" />
           </el-form-item>
+
           <el-form-item prop="password">
             <el-input v-model="loginForm.password" type="password" placeholder="密码" prefix-icon="iconfont icon-lock" maxlength="20"
               @keyup.enter.native="handleLogin" />
           </el-form-item>
+
           <el-form-item style="width:100%;">
             <el-button :loading="loading" class="login-btn" size="medium" type="primary" style="width:100%;"
               @click.native.prevent="handleLogin">
@@ -64,7 +67,7 @@
       data() {
         return {
           loginForm:{
-            username: 'admin',
+            phone: '13812312312',
             password: '123456'
           },
           loading: false
@@ -87,7 +90,7 @@
             }
           }
           return {
-            'username': [{ 'validator': validateUsername, 'trigger': 'blur' }],
+            'phone': [{ 'validator': validateUsername, 'trigger': 'blur' }],
             'password': [{ 'validator': validatePassword, 'trigger': 'blur' }]
           }
         }
@@ -102,6 +105,7 @@
               let res = await loginApi(this.loginForm)
               if (String(res.code) === '1') {
                 localStorage.setItem('userInfo',JSON.stringify(res.data))
+
                 window.location.href= '../../index.html'
               } else {
                 this.$message.error(res.msg)

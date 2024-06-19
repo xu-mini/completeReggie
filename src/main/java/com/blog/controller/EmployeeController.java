@@ -32,18 +32,17 @@ public class EmployeeController {
     public Result<Employee> login(HttpServletRequest request, @RequestBody Employee employee) {
         String password = employee.getPassword();
         password = DigestUtils.md5DigestAsHex(password.getBytes());
-        //这部分就是MP
         LambdaQueryWrapper<Employee> lqw = new LambdaQueryWrapper<>();
-        lqw.eq(Employee::getUsername, employee.getUsername());
+        lqw.eq(Employee::getPhone, employee.getPhone());
         Employee emp = employeeService.getOne(lqw);
         if (emp == null) {
-            return Result.error("登陆失败");
+            return Result.error("账号未添加");
         }
         if (!emp.getPassword().equals(password)) {
             return Result.error("登录失败");
         }
         if (emp.getStatus() == 0) {
-            return Result.error("该用户已被禁用");
+            return Result.error("该手机已被禁用");
         }
         //存个Session，只存个id就行了
         request.getSession().setAttribute("employee", emp.getId());

@@ -29,7 +29,7 @@ function checkUserName (rule, value, callback){
 //校验姓名
 function checkName (rule, value, callback){
   if (value == "") {
-    callback(new Error("请输入姓名"))
+    callback(new Error("请输入对应园区"))
   } else if (value.length > 12) {
     callback(new Error("账号长度应是1-12"))
   } else {

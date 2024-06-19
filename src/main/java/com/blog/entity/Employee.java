@@ -16,7 +16,7 @@ public class Employee implements Serializable {
 
     private Long id;
 
-    private String username;
+//    private String username;
 
     private String name;
 
@@ -24,11 +24,13 @@ public class Employee implements Serializable {
 
     private String phone;
 
-    private String sex;
+//    private String sex;
 
-    private String idNumber;//身份证号码
+//    private String idNumber;//身份证号码
 
     private Integer status;
+
+    private Integer type; // 账号类型
 
     @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createTime;
