@@ -26,12 +26,16 @@
         </el-form-item>
 
         <el-form-item label="所属园区" prop="name">
-          <el-input v-model="ruleForm.name" placeholder="请输入相应得园区" maxlength="20"/>
+          <el-input
+                  v-model="ruleForm.name"
+                  placeholder="请输入相应得园区"
+                  maxlength="20"
+                  :disabled="type !== 0"/>
         </el-form-item>
 
-        <el-form-item label="身份" prop="type">
-          <el-select v-model="ruleForm.type" placeholder="请选择身份">
-            <el-option label="管理员" value="管理员"></el-option>
+        <el-form-item label="身份">
+          <el-select v-model="userType" placeholder="请选择身份">
+            <el-option v-if="isTypeEqualZero" label="管理员" value="管理员"></el-option>
             <el-option label="员工" value="员工"></el-option>
           </el-select>
         </el-form-item>
@@ -70,10 +74,11 @@
           return {
             id: '',
             actionType : '',
+            userType:'',
             ruleForm : {
                 'name': '',
                 'phone': '',
-                'type': ''
+                'type': 2
             }
           }
         },
@@ -83,39 +88,59 @@
               name: [{ required: true, 'validator': checkName, 'trigger': 'blur' }],
               'phone': [{ 'required': true, 'validator': checkPhone, 'trigger': 'blur' }],
             }
+          },
+          isTypeEqualZero(){
+            return this.type === 0;
           }
         },
         created() {
+          const userInfo = JSON.parse(localStorage.getItem('userInfo'))
           this.id = requestUrlParam('id')
           this.actionType = this.id ? 'edit' : 'add'
+          this.type = userInfo.type
           if (this.id) {
             this.init()
+          }else{
+            if(userInfo.type !== 0){
+                this.ruleForm.name = userInfo.name
+                this.userType = "员工"
+            }
           }
         },
         mounted() {
         },
         methods: {
-          async init () {
-            queryEmployeeById(this.id).then(res => {
-              console.log(res)
+          async init() {
+            try {
+              const res = await queryEmployeeById(this.id);
               if (String(res.code) === '1') {
-                console.log(res.data)
-                this.ruleForm = res.data
-                this.type = res.data.type === '1' ? '管理员' : '员工'
-                // this.ruleForm.sex = res.data.sex === '0' ? '女' : '男'
-                // this.ruleForm.password = ''
+                this.ruleForm = res.data;
+                switch (res.data.type) {
+                  case 0:
+                    this.userType = '超级管理员';
+                    break;
+                  case 1:
+                    this.userType = '管理员';
+                    break;
+                  case 2:
+                    this.userType = '员工';
+                    break;
+                }
               } else {
-                this.$message.error(res.msg || '操作失败')
+                this.$message.error(res.msg || '操作失败');
               }
-            })
+            } catch (err) {
+              this.$message.error('请求出错了：' + err);
+            }
           },
           submitForm (formName, st) {
             this.$refs[formName].validate((valid) => {
               if (valid) {
                 if (this.actionType === 'add') {
+                  console.log(this.ruleForm)
                   const params = {
                     ...this.ruleForm,
-                    type: this.ruleForm.type === '管理员' ? '1' : '2'
+                    type: this.ruleForm.userType === '管理员' ? '1' : '2'
                   }
                   addEmployee(params).then(res => {
                     if (res.code === 1) {
@@ -128,10 +153,6 @@
                           'name': '',
                           'phone': '',
                           'type':'',
-                          // 'password': '',
-                          // 'rePassword': '',/
-                          // 'sex': '男',
-                          // 'idNumber': ''
                         }
                       }
                     } else {
@@ -143,7 +164,7 @@
                 } else {
                   const params = {
                     ...this.ruleForm,
-                    type: this.ruleForm.type === '管理员' ? '1' : '2'
+                    type: this.ruleForm.userType === '管理员' ? '1' : '2'
                   }
                   editEmployee(params).then(res => {
                     if (res.code === 1) {

@@ -78,14 +78,15 @@ public class EmployeeController {
     }
 
     @GetMapping("/page")
-    public Result<Page> page(int page, int pageSize, String name) {
-        log.info("page={},pageSize={},name={}", page, pageSize, name);
+    public Result<Page> page(int page, int pageSize, String phone,String fieldName) {
+        log.info("page={},pageSize={},phone={},fieldName={}", page, pageSize, phone, fieldName);
         //构造分页构造器
         Page<Employee> pageInfo = new Page<>(page, pageSize);
         //构造条件构造器
         LambdaQueryWrapper<Employee> wrapper = new LambdaQueryWrapper<>();
         //添加过滤条件（当我们没有输入name时，就相当于查询所有了）
-        wrapper.like(!(name == null || "".equals(name)), Employee::getName, name);
+        wrapper.like(!(fieldName == null || "".equals(fieldName)), Employee::getName, fieldName);
+        wrapper.like(!(phone == null || "".equals(phone)), Employee::getPhone, phone);
         //并对查询的结果进行降序排序，根据更新时间
         wrapper.orderByDesc(Employee::getUpdateTime);
         //执行查询

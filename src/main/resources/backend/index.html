@@ -62,7 +62,7 @@
                   >
                 </el-submenu>
                 <el-menu-item v-else :index="item.id" @click="menuHandle(item,false)">
-                  <i class="iconfont" :class="item.icon"></i>
+                    <i class="iconfont" :class="item.icon"></i>
                   <span slot="title">{{item.name}}</span>
                 </el-menu-item>
               </div>
@@ -80,7 +80,6 @@
             </div>
             <div class="right-menu">
               <div class="avatar-wrapper">{{ userInfo.name }}</div>
-              <!-- <div class="logout" @click="logout">退出</div> -->
               <img src="images/icons/btn_close@2x.png" class="outLogin" alt="退出" @click="logout" />
             </div>
           </div>
@@ -114,10 +113,16 @@
         el: '#app',
         data() {
           return {
-            defAct: '2',
-            menuActived: '2',
+            defAct: '1',
+            menuActived: '1',
             userInfo: {},
             menuList: [
+                  {
+                    id: '1',
+                    name: '物流场',
+                    url: 'page/field/list.html',
+                    icon: 'icon-category'
+                  },
                   {
                     id: '2',
                     name: '账号管理',
@@ -155,8 +160,8 @@
                     icon: 'icon-order'
                   }
             ],
-            iframeUrl: 'page/member/list.html',
-            headTitle: '账号管理',
+            iframeUrl: 'page/field/list.html',
+            headTitle: '物流场',
             goBackFlag: false,
             loading: true,
             timer: null

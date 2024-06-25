@@ -12,7 +12,6 @@
   <style>
     #member-app  .notAdmin::after{
       border: 0 !important;
-
     }
   </style>
 </head>
@@ -34,12 +33,15 @@
             @click="handleQuery"
           ></i>
         </el-input>
+
         <el-button
           type="primary"
           @click="addMemberHandle('add')"
+          v-if="isTypeNot2"
         >
           + 添加账号
         </el-button>
+
       </div>
       <el-table
         :data="tableData"
@@ -76,6 +78,7 @@
           label="操作"
           width="160"
           align="center"
+          v-if="isTypeNot2"
         >
           <template slot-scope="scope">
             <el-button
@@ -83,7 +86,7 @@
               size="small"
               class="blueBug"
               @click="addMemberHandle(scope.row.id)"
-              :class="{notAdmin:user !== 'admin'}"
+              v-if="scope.row.type===2||type === 0"
             >
               编辑
             </el-button>
@@ -93,7 +96,7 @@
               size="small"
               class="delBut non"
               @click="statusHandle(scope.row)"
-              v-if="isTypeNot2"
+              v-if="(type===0&&scope.row.type!==0)||scope.row.type===2"
             >
               {{ scope.row.status == 1 ? '禁用' : '启用' }}
             </el-button>
@@ -133,10 +136,13 @@
              tableData : [],
              id : '',
              status : '',
-             type:0,
+             type:2,
           }
         },
         computed: {
+          isTypeEqualZero() {
+            return this.type === 0;
+          },
           isTypeNot2() {
             return this.type !== 2;
           }
@@ -150,10 +156,12 @@
         },
         methods: {
           async init () {
+            const userInfo = JSON.parse(localStorage.getItem('userInfo'));
             const params = {
               page: this.page,
               pageSize: this.pageSize,
-              name: this.input ? this.input : undefined
+              phone: this.input ? this.input : undefined,
+              fieldName: userInfo.type===0?'':userInfo.name,
             }
             await getMemberList(params).then(res => {
               if (String(res.code) === '1') {

@@ -24,14 +24,12 @@ import java.util.stream.Collectors;
 @RequestMapping("/dish")
 @Slf4j
 public class DishController {
-
     @Autowired
     private DishService dishService;
     @Autowired
     private DishFlavorService dishFlavorService;
     @Autowired
     private CategoryService categoryService;
-
 
     @PostMapping
     public Result<String> save(@RequestBody DishDto dishDto) {
